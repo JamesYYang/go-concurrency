@@ -1,13 +1,33 @@
 # go-concurrency
 some research on go concurrency
 
-## The Go approach
-Don't communicate by sharing memory, share memory by communicating.
-
 ## The Two Principles
 - Start goroutines when you have concurrent work.
-- Share by communicating.
+- Don't communicate by sharing memory, share memory by communicating.
 
+## Don't Use Callback in Async API
+
+```go
+// This is not how we write Go.
+func Fetch(name string, f func(Item)) {
+    go func() {
+        [...]
+        f(item)
+    }()
+}
+```
+
+```go
+// The Go analogue to a Future is a single-element buffered channel.
+func Fetch(name string) <-chan Item {
+    c := make(chan Item, 1)
+    go func() {
+        [...]
+        c <- item
+    }()
+    return c
+}
+```
 
 ## Channel
 
